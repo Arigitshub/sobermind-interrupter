@@ -260,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let audioCtx = null;
   let synthNodes = []; // oscillators/noise nodes
   let masterGain = null;
+  let ambientGain = null; // specific gain node for fading ambient sounds smoothly
 
   function initAudio() {
     if (!audioCtx) {
@@ -273,13 +274,19 @@ document.addEventListener('DOMContentLoaded', () => {
   function playAmbientSound() {
     if (!appState.settings.audioEnabled) return;
     initAudio();
-    stopAmbientSound(); // clear any running sound first
+    stopAmbientSound(0.2); // clear any running sound quickly first
 
     if (audioCtx.state === 'suspended') {
       audioCtx.resume();
     }
 
     const type = appState.settings.currentSound;
+
+    // Create sound-specific gain node for smooth fading
+    ambientGain = audioCtx.createGain();
+    ambientGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    ambientGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 1.5); // Fade-in over 1.5 seconds
+    ambientGain.connect(masterGain);
 
     if (type === 'binaural') {
       // 6Hz Theta waves: 100Hz Left, 106Hz Right
@@ -305,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lpf.type = 'lowpass';
       lpf.frequency.value = 120; // warm, soft low end
 
-      merger.connect(lpf).connect(masterGain);
+      merger.connect(lpf).connect(ambientGain);
 
       oscL.start(0);
       oscR.start(0);
@@ -348,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       osc2.connect(gain2).connect(filter);
       osc3.connect(gain3).connect(filter);
 
-      filter.connect(masterGain);
+      filter.connect(ambientGain);
 
       osc1.start(0);
       osc2.start(0);
@@ -381,23 +388,48 @@ document.addEventListener('DOMContentLoaded', () => {
       const ampMod = audioCtx.createGain();
       ampMod.gain.value = 0.75;
       
-      noise.connect(lpFilter).connect(bpFilter).connect(ampMod).connect(masterGain);
+      noise.connect(lpFilter).connect(bpFilter).connect(ampMod).connect(ambientGain);
       
       noise.start(0);
       synthNodes = [noise, lpFilter, bpFilter, ampMod];
     }
   }
 
-  function stopAmbientSound() {
-    synthNodes.forEach(node => {
-      try {
-        if (node.stop) {
-          node.stop();
-        }
-        node.disconnect();
-      } catch (e) {}
-    });
+  function stopAmbientSound(fadeDuration = 1.0) {
+    if (!audioCtx || !ambientGain) {
+      synthNodes.forEach(node => {
+        try {
+          if (node.stop) node.stop();
+          node.disconnect();
+        } catch (e) {}
+      });
+      synthNodes = [];
+      return;
+    }
+
+    const now = audioCtx.currentTime;
+    const currentGain = ambientGain.gain.value;
+    ambientGain.gain.cancelScheduledValues(now);
+    ambientGain.gain.setValueAtTime(currentGain, now);
+    ambientGain.gain.linearRampToValueAtTime(0, now + fadeDuration);
+
+    const oldNodes = [...synthNodes];
+    const oldGain = ambientGain;
+    
     synthNodes = [];
+    ambientGain = null;
+
+    setTimeout(() => {
+      oldNodes.forEach(node => {
+        try {
+          if (node.stop) node.stop();
+          node.disconnect();
+        } catch (e) {}
+      });
+      try {
+        oldGain.disconnect();
+      } catch (e) {}
+    }, fadeDuration * 1000 + 100);
   }
 
   function playChime(success = true) {
@@ -534,6 +566,27 @@ document.addEventListener('DOMContentLoaded', () => {
       bubble.style.transform = `scale(${currentPhase.scale})`;
       bubble.style.transition = `transform ${currentPhase.duration}s linear`;
 
+      // Update ambient background radial glow scale/opacity dynamically
+      let progress = count / currentPhase.duration;
+      let currentScale = 1.0;
+      let currentOpacity = 0.65;
+      if (currentPhase.text === "Breathe In") {
+        currentScale = 1.0 + 0.6 * progress;
+        currentOpacity = 0.45 + 0.3 * progress;
+      } else if (currentPhase.text === "Hold Breath") {
+        currentScale = 1.6;
+        currentOpacity = 0.75;
+      } else if (currentPhase.text === "Breathe Out") {
+        currentScale = 1.6 - 0.6 * progress;
+        currentOpacity = 0.75 - 0.3 * progress;
+      } else { // Hold Empty (in Box breathing)
+        currentScale = 1.0;
+        currentOpacity = 0.45;
+      }
+      document.documentElement.style.setProperty('--breath-glow-scale', currentScale);
+      document.documentElement.style.setProperty('--breath-glow-opacity', currentOpacity);
+      document.documentElement.style.setProperty('--breath-transition-duration', '1s');
+
       count++;
       if (count >= currentPhase.duration) {
         breathCount = (breathCount + 1) % phases.length;
@@ -550,6 +603,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const bubble = document.getElementById('breath-bubble');
     bubble.style.transform = "scale(1)";
     bubble.style.transition = "none";
+    // Reset background glow properties to default values
+    document.documentElement.style.setProperty('--breath-glow-scale', 1.0);
+    document.documentElement.style.setProperty('--breath-glow-opacity', 0.65);
+    document.documentElement.style.setProperty('--breath-transition-duration', '0.5s');
   }
 
   // 2. 5-4-3-2-1 Somatic Sensory check steps
@@ -582,6 +639,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (sensoryInput.value.trim().length > 2) {
+        // High frequency delightful double-blip confirmation sound
+        if (appState.settings.audioEnabled) {
+          initAudio();
+          const now = audioCtx.currentTime;
+          const notes = [1200, 1600];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+            gain.gain.setValueAtTime(0.015, now + idx * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.08);
+            osc.connect(gain).connect(masterGain);
+            osc.start(now + idx * 0.05);
+            osc.stop(now + idx * 0.05 + 0.1);
+          });
+        }
+
+        // Somatic card shake and input flash feedback
+        const card = document.getElementById('sensory-card');
+        card.classList.remove('shake-horizontal');
+        sensoryInput.classList.remove('flash-success');
+        void card.offsetWidth; // Force reflow
+        void sensoryInput.offsetWidth;
+        card.classList.add('shake-horizontal');
+        sensoryInput.classList.add('flash-success');
+        
+        setTimeout(() => {
+          card.classList.remove('shake-horizontal');
+          sensoryInput.classList.remove('flash-success');
+        }, 800);
+
         if (sensoryStep > 1) {
           sensoryStep--;
           updateSensoryUI();
@@ -1092,6 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Abort clicks
   abortBtn.addEventListener('click', () => {
     if (appState.settings.strictMode && (activeTimer.totalDuration - activeTimer.timeLeft >= 15)) {
+      triggerStrictWarning();
       return; 
     }
     finishSession('aborted');
@@ -1105,6 +1195,9 @@ document.addEventListener('DOMContentLoaded', () => {
       
       selectedOutcome = btn.dataset.outcome;
       pivotOptionsGroup.style.display = (selectedOutcome === 'pivot') ? 'block' : 'none';
+
+      // Play outcome specific sound signature on choice activation
+      playOutcomeSound(selectedOutcome);
     });
   });
 
@@ -1136,8 +1229,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && activeTimer.intervalId) {
       if (appState.settings.strictMode && (activeTimer.totalDuration - activeTimer.timeLeft >= 15)) {
+        triggerStrictWarning();
         return; 
       }
+      triggerVisualPress(abortBtn);
       finishSession('aborted');
     }
   });
@@ -1201,7 +1296,191 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleModal('intro-modal', true);
   });
 
+  // ==========================================
+  // MICRO-INTERACTIONS & USER EXPERIENCE DELIGHTS
+  // ==========================================
+  
+  // 1. Tactile Sound Ticks on Hover
+  function playTick() {
+    if (!appState.settings.audioEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1000, now);
+    
+    gain.gain.setValueAtTime(0.015, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    
+    osc.connect(gain).connect(masterGain);
+    osc.start(now);
+    osc.stop(now + 0.04);
+  }
+
+  // Bind mouse hover to tactile feedback elements
+  function bindTactileTicks() {
+    const selectors = 'button, .radio-btn, .pivot-chip, select, input[type="radio"], input[type="checkbox"]';
+    document.querySelectorAll(selectors).forEach(el => {
+      el.removeEventListener('mouseenter', playTick);
+      el.addEventListener('mouseenter', playTick);
+    });
+  }
+
+  // 2. Card Focus Ambient Glow
+  const parentCard = impulseInput.closest('.glass-panel');
+  if (parentCard) {
+    impulseInput.addEventListener('focus', () => parentCard.classList.add('focused-glow'));
+    impulseInput.addEventListener('blur', () => parentCard.classList.remove('focused-glow'));
+  }
+
+  // 3. Spotlight Cursor Position Tracking on Glass Panels
+  document.querySelectorAll('.glass-panel').forEach(panel => {
+    panel.addEventListener('mousemove', (e) => {
+      const rect = panel.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      panel.style.setProperty('--mouse-x', `${x}px`);
+      panel.style.setProperty('--mouse-y', `${y}px`);
+    });
+  });
+
+  // 4. Strict Mode Warning Shake & Buzz
+  function triggerStrictWarning() {
+    // Low frequency distorted saw buzzer
+    if (appState.settings.audioEnabled) {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(130, now);
+      
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(300, now);
+      
+      osc.connect(filter).connect(gain).connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    }
+    
+    // Shake abort button and flash red
+    abortBtn.classList.remove('shake-horizontal', 'flash-error');
+    void abortBtn.offsetWidth; // force reflow
+    abortBtn.classList.add('shake-horizontal', 'flash-error');
+    setTimeout(() => {
+      abortBtn.classList.remove('shake-horizontal', 'flash-error');
+    }, 800);
+  }
+
+  // 5. Outcome Sound Signatures (Pivot, Proceed, Slip)
+  function playOutcomeSound(outcome) {
+    if (!appState.settings.audioEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+    
+    if (outcome === 'pivot') {
+      // Ascending major chord
+      const notes = [523.25, 659.25, 783.99];
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        
+        gain.gain.setValueAtTime(0, now + idx * 0.08);
+        gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.08 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.4);
+        
+        osc.connect(gain).connect(masterGain);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.45);
+      });
+    } else if (outcome === 'proceed') {
+      // Calming deep sinus chime
+      const notes = [261.63, 392.00];
+      notes.forEach((freq) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+        
+        osc.connect(gain).connect(masterGain);
+        osc.start(now);
+        osc.stop(now + 0.85);
+      });
+    } else if (outcome === 'slip') {
+      // Tri-wave descending sweep
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(164.81, now);
+      osc.frequency.exponentialRampToValueAtTime(110.00, now + 0.45);
+      
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+      
+      osc.connect(gain).connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 0.55);
+    }
+  }
+
+  // 6. Keyboard Hotkeys Press Simulations
+  function triggerVisualPress(element) {
+    if (!element) return;
+    element.classList.add('active-press');
+    setTimeout(() => {
+      element.classList.remove('active-press');
+    }, 150);
+  }
+
+  // Hotkeys & Keyboard Accessibility
+  document.addEventListener('keydown', (e) => {
+    if (reflectionView.classList.contains('active')) {
+      if (e.key === '1') {
+        const pivotBtn = document.querySelector('.reflection-btn.pivot');
+        if (pivotBtn) {
+          triggerVisualPress(pivotBtn);
+          pivotBtn.click();
+        }
+      } else if (e.key === '2') {
+        const proceedBtn = document.querySelector('.reflection-btn.proceed');
+        if (proceedBtn) {
+          triggerVisualPress(proceedBtn);
+          proceedBtn.click();
+        }
+      } else if (e.key === '3') {
+        const slipBtn = document.querySelector('.reflection-btn.slip');
+        if (slipBtn) {
+          triggerVisualPress(slipBtn);
+          slipBtn.click();
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        triggerVisualPress(saveReflectionBtn);
+        saveReflectionBtn.click();
+      }
+    }
+  });
+
+  // Re-bind tactile ticks on DOM re-renders
+  const originalUpdateUI = updateDashboardUI;
+  updateDashboardUI = function() {
+    originalUpdateUI();
+    bindTactileTicks();
+  };
+
   // Initialization calls
   loadState();
   toggleParticles(appState.settings.particleBg);
+  bindTactileTicks();
 });

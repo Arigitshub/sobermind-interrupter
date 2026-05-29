@@ -219,6 +219,11 @@ body {
   border-color: rgba(0, 242, 254, 0.12);
 }
 
+.glass-panel.focused-glow {
+  border-color: var(--accent-cyan);
+  box-shadow: var(--shadow-lg), 0 0 25px var(--border-glow);
+}
+
 /* Sidebar layouts */
 .side-panel {
   display: flex;
@@ -1680,4 +1685,136 @@ body {
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
 }
+
+/* -------------------------------------------------------------
+ * PREMIUM MICRO-INTERACTIONS & SPOTLIGHT EFFECTS
+ * ------------------------------------------------------------- */
+
+.glass-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(0, 242, 254, 0.05),
+    transparent 70%
+  );
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+body[data-theme="forest"] .glass-panel::before {
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(75, 220, 150, 0.06),
+    transparent 70%
+  );
+}
+
+body[data-theme="cyberpunk"] .glass-panel::before {
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(255, 120, 50, 0.06),
+    transparent 70%
+  );
+}
+
+body[data-theme="void"] .glass-panel::before {
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(255, 255, 255, 0.03),
+    transparent 70%
+  );
+}
+
+.glass-panel:hover::before {
+  opacity: 1;
+}
+
+.glass-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dynamic Breathing Background Pulse */
+.radial-glow {
+  transform: translate(-50%, -50%) scale(var(--breath-glow-scale, 1)) !important;
+  opacity: var(--breath-glow-opacity, 0.65) !important;
+  transition: transform var(--breath-transition-duration, 1s) linear, opacity var(--breath-transition-duration, 1s) linear;
+}
+
+/* Somatic / Error Animations */
+@keyframes shake-h {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.shake-horizontal {
+  animation: shake-h 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes flash-green {
+  0% { border-color: var(--secondary-green); box-shadow: 0 0 15px rgba(20, 220, 140, 0.4); }
+  100% { border-color: var(--border-color); box-shadow: none; }
+}
+.flash-success {
+  animation: flash-green 0.8s ease-out;
+}
+
+@keyframes flash-red {
+  0% { border-color: #ff5757; box-shadow: 0 0 15px rgba(255, 87, 87, 0.5); background: rgba(255, 87, 87, 0.08); }
+  100% { border-color: rgba(255, 87, 87, 0.2); box-shadow: none; background: transparent; }
+}
+.flash-error {
+  animation: flash-red 0.8s ease-out;
+}
+
+/* Keyboard Hotkey Badges */
+.key-badge {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+  display: inline-block;
+  vertical-align: middle;
+  text-shadow: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: var(--transition-fast);
+}
+
+.btn-primary .key-badge {
+  background: rgba(3, 8, 22, 0.25);
+  border-color: rgba(3, 8, 22, 0.15);
+  color: #030816;
+  opacity: 0.85;
+}
+
+.reflection-btn .key-badge {
+  margin-top: 0.15rem;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Active pressed keyboard keys simulation */
+.active-press {
+  transform: scale(0.95) !important;
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 15px var(--border-glow) !important;
+}
+
 

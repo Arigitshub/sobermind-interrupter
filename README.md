@@ -30,6 +30,19 @@ When an impulse fires, a chemical surge floods your system. If you do not feed t
 | **Circular Countdown Ring** | SVG Vector Stroke Math | Progress ring depletion dynamically matched to clock ticks via `strokeDashoffset`. |
 | **Grounding Steppers** | Interactive JS State Engine | Visual breathing guides (4-7-8 rhythm), Somatic 5-4-3-2-1 check-ins, and cognitive logs. |
 | **Strict Mode Guard** | Javascript Lock Loop | Disables cancellation triggers after 15 seconds to prevent impulsive exits. |
+| **Premium Tactile Loops** | Web Audio + CSS variables | Cursor-spotlight panels, breathing background pulses, distinct choice chimes, and hotkey presses. |
+
+---
+
+## 🌌 Premium Micro-Reactions & Tactility
+SoberMind is designed to feel alive, responsive, and immersive:
+- **Spotlight Hover Glows:** Glass panels trace mouse cursor coordinates with a soft spotlight glow matched to the active Aura Palette.
+- **Somatic Breathing Pulse:** Viewport background glow expands and contracts in sync with inhale, hold, and exhale cycles.
+- **Linear Sound Fades:** Synthesized soundscapes fade in over 1.5s and out over 1.0s to avoid jarring starts and stops.
+- **Somatic Validation Delights:** Inputs in sensory check-ins trigger high-frequency double blips, green highlights, and card shakes.
+- **Outcome Sound Signatures:** Selected paths play distinct audio cues (ascending chime, grounding drone, or triangle-wave sweep).
+- **Strict Lockdown Alerts:** Escape or Cancel presses after 15s lockouts trigger low warning buzzers and red shakes.
+- **Hotkey Visual Press:** Inline hotkey badges visually compress (scale-down/glow) when their physical keys are pressed.
 
 ---
 
