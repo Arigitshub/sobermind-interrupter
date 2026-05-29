@@ -191,12 +191,12 @@
         <!-- Section 5 -->
         <article class="docs-section" id="python-lib">
           <h2>5. Terminal Command: `sobermind`</h2>
-          <p>You can run the SoberMind interrupter directly from your command terminal as a global command. This allows you to pause automatic actions inside your terminal workflow.</p>
+          <p>SoberMind can be run directly from your command terminal as a global command. This allows you to pause automatic actions inside your terminal workflow.</p>
           
           <h3 style="color: var(--text-primary); font-size: 1.1rem; margin: 1rem 0 0.5rem 0;">Option A: Install via Pip (Official PyPI Release)</h3>
-          <p>SoberMind is published globally on the Python Package Index. Install it directly on your system with one command:</p>
+          <p>SoberMind is published globally on the Python Package Index. Install or upgrade directly on your system with one command:</p>
           <div class="code-block-container">
-            pip install sobermind
+            pip install sobermind --upgrade
           </div>
           <p>Once installed, execute the command from any directory or terminal session:</p>
           <div class="code-block-container">
@@ -209,6 +209,15 @@
             <span class="code-comment"># Execute directly in cmd or PowerShell</span><br>
             sobermind <span class="code-string">"boredom snack urge"</span>
           </div>
+
+          <h3 style="color: var(--text-primary); font-size: 1.1rem; margin: 1.5rem 0 0.5rem 0;">v0.0.2 Command Reference & Global Storage</h3>
+          <p>Version 0.0.2 introduces command shortcuts, centralized user statistics, and a persistent global database profile:</p>
+          <ul>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>Global Log File:</strong> Session metrics are stored centrally at <code>~/.sobermind/sobermind_cli.log</code> (instead of scattered local files).</li>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>Manual & Help:</strong> View options by running <code>sobermind help</code>, <code>sobermind /</code>, or <code>sobermind ?</code>.</li>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>Habit Stats:</strong> View session counts, success/bypass rates, and recent histories by typing <code>sobermind stats</code> or <code>sobermind log</code>.</li>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>Reset:</strong> Safely clear all global habit records by typing <code>sobermind clear</code> or <code>sobermind reset</code>.</li>
+          </ul>
         </article>
 
         <!-- Section 6 -->
