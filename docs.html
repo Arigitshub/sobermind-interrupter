@@ -190,17 +190,25 @@
 
         <!-- Section 5 -->
         <article class="docs-section" id="python-lib">
-          <h2>5. Python Library: `sobermind-py`</h2>
-          <p>We are building a Python demo module `sobermind` that developers can run locally inside terminals to block impulsive workflow pivots. Here is a preview of the upcoming library interface:</p>
-
+          <h2>5. Terminal Command: `sobermind`</h2>
+          <p>You can run the SoberMind interrupter directly from your command terminal as a global command. This allows you to pause automatic actions inside your terminal workflow.</p>
+          
+          <h3 style="color: var(--text-primary); font-size: 1.1rem; margin: 1rem 0 0.5rem 0;">Option A: Install via Pip (Recommended)</h3>
+          <p>Install the repository locally in editable mode. This registers the executable command <code>sobermind</code> inside your Python scripts directory:</p>
           <div class="code-block-container">
-            <span class="code-keyword">import</span> sobermind<br><br>
-            <span class="code-comment"># Triggers a terminal-based 90-second breathing timer</span><br>
-            sobermind.<span class="code-def">pause</span>(<br>
-            &nbsp;&nbsp;impulse=<span class="code-string">"checking phone notifications"</span>,<br>
-            &nbsp;&nbsp;duration=<span class="code-keyword">90</span>,<br>
-            &nbsp;&nbsp;mode=<span class="code-string">"box-breathing"</span><br>
-            )
+            <span class="code-comment"># Run this inside the project root folder</span><br>
+            pip install -e .
+          </div>
+          <p>Once installed, execute the command from any directory:</p>
+          <div class="code-block-container">
+            sobermind <span class="code-string">"browsing social media"</span> --duration <span class="code-keyword">90</span>
+          </div>
+
+          <h3 style="color: var(--text-primary); font-size: 1.1rem; margin: 1.5rem 0 0.5rem 0;">Option B: Windows PATH / Batch script</h3>
+          <p>For Windows command prompts, you can add the project directory to your system environment <code>PATH</code> variable. The directory contains a batch script wrapper <code>sobermind.bat</code> which executes Python directly:</p>
+          <div class="code-block-container">
+            <span class="code-comment"># Execute directly in cmd or PowerShell</span><br>
+            sobermind <span class="code-string">"boredom snack urge"</span>
           </div>
         </article>
 
