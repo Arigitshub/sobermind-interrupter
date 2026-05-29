@@ -82,11 +82,21 @@ SoberMind is crafted around a **sleek space-nebula glassmorphic aesthetic**:
 
 ## 🚀 Setup & Launch
 
-### 1. Direct Preview (No Installation Needed)
-Since SoberMind is built using zero-dependency vanilla technologies, you can open the file [index.html](file:///D:/sobermind-interrupter/index.html) directly in any modern web browser to run the app immediately.
+### 1. Official Terminal CLI Command (Recommended)
+You can install and run the SoberMind interrupter directly from your command terminal using our official PyPI package:
+```bash
+pip install sobermind
+```
+Once installed, execute the command from any directory or shell session:
+```bash
+sobermind "impulse name"
+```
 
-### 2. Local Serving (Development Server)
-For live updates and development:
+### 2. Direct Web Preview (No Installation Needed)
+Since SoberMind's dashboard is built using zero-dependency vanilla technologies, you can open the file [index.html](file:///D:/sobermind-interrupter/index.html) directly in any modern web browser to run the app immediately.
+
+### 3. Local Serving (Development Server)
+For serving the multi-page web app and contributing to development:
 ```bash
 # Navigate to project folder
 cd sobermind-interrupter
