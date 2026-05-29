@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
       particleBg: true,
       audioEnabled: false,
       volume: 0.5,
-      currentSound: 'binaural'
+      currentSound: 'binaural',
+      theme: 'nebula'
     }
   };
 
@@ -38,10 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const parsed = JSON.parse(saved);
         appState = { ...appState, ...parsed };
+        
         // Sync toggles/UI with state
         document.getElementById('particle-bg-toggle').checked = appState.settings.particleBg;
         document.getElementById('strict-mode-toggle').checked = appState.settings.strictMode;
         document.getElementById('volume-range').value = appState.settings.volume;
+        
+        // Theme setting sync
+        const themeSelect = document.getElementById('theme-select');
+        themeSelect.value = appState.settings.theme || 'nebula';
+        document.body.dataset.theme = themeSelect.value;
         
         // Select active sound chip
         document.querySelectorAll('.sound-chip').forEach(chip => {
@@ -55,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // First run - show tutorial
       toggleModal('intro-modal', true);
+      updateDashboardUI();
     }
   }
 
@@ -67,9 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   const triggerInputView = document.getElementById('trigger-input-view');
   const timerView = document.getElementById('timer-view');
+  const reflectionView = document.getElementById('reflection-view');
   const impulseForm = document.getElementById('impulse-form');
   const impulseInput = document.getElementById('impulse-input');
-  const startBtn = document.getElementById('start-interruption-btn');
   
   const timerDigits = document.getElementById('timer-digits');
   const breathingState = document.getElementById('breathing-state');
@@ -90,6 +98,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const strictToggle = document.getElementById('strict-mode-toggle');
   const audioToggle = document.getElementById('ambient-audio-toggle');
   const volumeRange = document.getElementById('volume-range');
+  const themeSelect = document.getElementById('theme-select');
+
+  // Breathing technique elements
+  const breathingTechSelect = document.getElementById('breathing-tech-select');
+  const breathingTechGroup = document.getElementById('breathing-tech-group');
+  const groundingSelect = document.getElementById('grounding-select');
+
+  // Reflection Screen Elements
+  const reflectionBtns = document.querySelectorAll('.reflection-btn');
+  const pivotOptionsGroup = document.getElementById('pivot-options-group');
+  const pivotChips = document.querySelectorAll('.pivot-chip');
+  const saveReflectionBtn = document.getElementById('save-reflection-btn');
+
+  let selectedOutcome = 'pivot'; // pivot, proceed, slip
+  let selectedPivotAction = 'Drink Water';
 
   // ==========================================
   // AMBIENT PARTICLES ENGINE
@@ -247,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
       synthNodes = [oscL, oscR, lpf, merger];
 
     } else if (type === 'drone') {
-      // Synthesize a cosmic drone with LFO filter modulation
       const osc1 = audioCtx.createOscillator();
       const osc2 = audioCtx.createOscillator();
       const osc3 = audioCtx.createOscillator();
@@ -257,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
       osc2.type = 'triangle';
       osc2.frequency.value = 110; // A2
       osc3.type = 'sine';
-      osc3.frequency.value = 165; // E3 (fifth)
+      osc3.frequency.value = 165; // E3
 
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
@@ -266,8 +288,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const lfo = audioCtx.createOscillator();
       const lfoGain = audioCtx.createGain();
-      lfo.frequency.value = 0.15; // very slow cycle (approx 7 seconds)
-      lfoGain.gain.value = 80; // modulation range
+      lfo.frequency.value = 0.15; 
+      lfoGain.gain.value = 80; 
 
       lfo.connect(lfoGain).connect(filter.frequency);
 
@@ -293,8 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       synthNodes = [osc1, osc2, osc3, lfo, lfoGain, filter, gain1, gain2, gain3];
 
     } else if (type === 'rain') {
-      // Create white noise buffer
-      const bufferSize = audioCtx.sampleRate * 2; // 2 seconds
+      const bufferSize = audioCtx.sampleRate * 2; 
       const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const output = noiseBuffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -305,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
       noise.buffer = noiseBuffer;
       noise.loop = true;
 
-      // Filter noise to sound like rain (lowpass/bandpass cascade)
       const lpFilter = audioCtx.createBiquadFilter();
       lpFilter.type = 'lowpass';
       lpFilter.frequency.value = 800;
@@ -315,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
       bpFilter.frequency.value = 400;
       bpFilter.Q.value = 1;
 
-      // Slow amplitude modulation to mimic wind/surges
       const ampMod = audioCtx.createGain();
       ampMod.gain.value = 0.75;
       
@@ -349,21 +368,19 @@ document.addEventListener('DOMContentLoaded', () => {
     osc.connect(gain).connect(masterGain);
 
     if (success) {
-      // Warm major pentatonic chime chord sequence
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(523.25, now); // C5
-      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25); // G5
-      osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.5); // C6
+      osc.frequency.setValueAtTime(523.25, now); 
+      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25); 
+      osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.5); 
 
       gain.gain.setValueAtTime(0.3, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
       osc.start(now);
       osc.stop(now + 1.3);
     } else {
-      // Dissonant descending chime for cancel
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(329.63, now); // E4
-      osc.frequency.exponentialRampToValueAtTime(220.00, now + 0.3); // A3
+      osc.frequency.setValueAtTime(329.63, now); 
+      osc.frequency.exponentialRampToValueAtTime(220.00, now + 0.3); 
 
       gain.gain.setValueAtTime(0.2, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
@@ -423,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
         carouselPrompt.classList.remove('fade-out');
       }, 300);
       
-    }, 15000); // 15 seconds
+    }, 15000); 
   }
 
   function stopCarousel() {
@@ -434,49 +451,53 @@ document.addEventListener('DOMContentLoaded', () => {
   // INTERACTIVE GROUNDING CONTROLLERS
   // ==========================================
   
-  // 1. Guided Breathing (4-7-8 rhythm)
+  // 1. Dynamic Breathing Guide (4-7-8, Box, Coherent support)
   let breathInterval = null;
   function startBreathingGuide() {
     const bubble = document.getElementById('breath-bubble');
-    let breathCount = 0; // cycles through: 0 = in (4s), 1 = hold (7s), 2 = out (8s)
+    const pattern = breathingTechSelect.value;
+    
+    let breathCount = 0; // index of phase
     let count = 0;
+
+    // Pattern definitions: [text, color, target_scale, duration]
+    let phases = [];
+    if (pattern === '478') {
+      phases = [
+        { text: "Breathe In", color: "var(--accent-cyan)", scale: 3.0, duration: 4 },
+        { text: "Hold Breath", color: "var(--accent-magenta)", scale: 3.0, duration: 7 },
+        { text: "Breathe Out", color: "var(--secondary-green)", scale: 1.0, duration: 8 }
+      ];
+    } else if (pattern === 'box') {
+      phases = [
+        { text: "Breathe In", color: "var(--accent-cyan)", scale: 3.0, duration: 4 },
+        { text: "Hold Breath", color: "var(--accent-magenta)", scale: 3.0, duration: 4 },
+        { text: "Breathe Out", color: "var(--secondary-green)", scale: 1.0, duration: 4 },
+        { text: "Hold Empty", color: "var(--text-muted)", scale: 1.0, duration: 4 }
+      ];
+    } else { // coherent
+      phases = [
+        { text: "Breathe In", color: "var(--accent-cyan)", scale: 3.0, duration: 5 },
+        { text: "Breathe Out", color: "var(--secondary-green)", scale: 1.0, duration: 5 }
+      ];
+    }
 
     function breathStep() {
       if (activeTimer.timeLeft <= 0) return;
 
-      if (breathCount === 0) { // Breathe In (4 seconds)
-        breathingState.innerText = "Breathe In";
-        breathingState.style.color = "var(--accent-cyan)";
-        bubble.style.transform = "scale(3.2)";
-        bubble.style.transition = "transform 4s cubic-bezier(0.4, 0, 0.2, 1)";
-        count++;
-        if (count >= 4) {
-          breathCount = 1;
-          count = 0;
-        }
-      } else if (breathCount === 1) { // Hold (7 seconds)
-        breathingState.innerText = "Hold Breath";
-        breathingState.style.color = "var(--accent-magenta)";
-        bubble.style.transform = "scale(3.2)";
-        count++;
-        if (count >= 7) {
-          breathCount = 2;
-          count = 0;
-        }
-      } else { // Breathe Out (8 seconds)
-        breathingState.innerText = "Breathe Out";
-        breathingState.style.color = "var(--secondary-green)";
-        bubble.style.transform = "scale(1)";
-        bubble.style.transition = "transform 8s cubic-bezier(0.4, 0, 0.2, 1)";
-        count++;
-        if (count >= 8) {
-          breathCount = 0;
-          count = 0;
-        }
+      const currentPhase = phases[breathCount];
+      breathingState.innerText = currentPhase.text;
+      breathingState.style.color = currentPhase.color;
+      bubble.style.transform = `scale(${currentPhase.scale})`;
+      bubble.style.transition = `transform ${currentPhase.duration}s linear`;
+
+      count++;
+      if (count >= currentPhase.duration) {
+        breathCount = (breathCount + 1) % phases.length;
+        count = 0;
       }
     }
     
-    // Run immediate first step, then tick every second
     breathStep();
     breathInterval = setInterval(breathStep, 1000);
   }
@@ -507,7 +528,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sensoryInput.value = '';
     sensoryInput.placeholder = "Enter response, then press Enter...";
     
-    // Draw dots representing steps left
     let dots = '';
     for (let i = 5; i >= 1; i--) {
       dots += (i <= sensoryStep) ? '● ' : '○ ';
@@ -551,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reframingInterval = setInterval(() => {
       index = (index + 1) % reframingQuestions.length;
       questionText.innerText = `"${reframingQuestions[index]}"`;
-    }, 20000); // cycle slower than general prompt
+    }, 20000); 
   }
 
   function stopReframingGuide() {
@@ -613,7 +633,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // TIMER TICK LOOP CONTROL
   // ==========================================
   function startPauseTimer(impulse, durationSeconds, mode) {
-    // Populate stats/details
     activeTimer.totalDuration = durationSeconds;
     activeTimer.timeLeft = durationSeconds;
     activeTimer.impulse = impulse;
@@ -624,32 +643,25 @@ document.addEventListener('DOMContentLoaded', () => {
     targetImpulseText.innerText = impulse;
     timerDigits.innerText = activeTimer.timeLeft;
     
-    // UI layout change
     triggerInputView.classList.remove('active');
     setTimeout(() => {
       timerView.classList.add('active');
       setProgress(100);
     }, 200);
 
-    // Controls setup
     completeBtn.classList.add('disabled');
     completeBtn.disabled = true;
     abortBtn.classList.remove('disabled');
     abortBtn.disabled = false;
     abortBtn.style.display = 'block';
 
-    // Start Audio
     if (appState.settings.audioEnabled) {
       playAmbientSound();
     }
 
-    // Activate selected Grounding Sub-View
     activateGroundingView(mode);
-    
-    // Start general prompts carousel
     startCarousel();
 
-    // Set countdown interval
     activeTimer.intervalId = setInterval(tickTimer, 1000);
   }
 
@@ -657,18 +669,15 @@ document.addEventListener('DOMContentLoaded', () => {
     activeTimer.timeLeft--;
     timerDigits.innerText = activeTimer.timeLeft;
     
-    // Update SVG progress ring
     const percentage = (activeTimer.timeLeft / activeTimer.totalDuration) * 100;
     setProgress(percentage);
 
-    // Check strict mode cancellation lock
     if (appState.settings.strictMode && (activeTimer.totalDuration - activeTimer.timeLeft >= 15)) {
       abortBtn.classList.add('disabled');
       abortBtn.disabled = true;
-      abortBtn.title = "Strict mode enabled. Pause cannot be aborted after 15s.";
+      abortBtn.title = "Strict mode active. Pause cannot be canceled after 15s.";
     }
 
-    // Complete timer
     if (activeTimer.timeLeft <= 0) {
       clearInterval(activeTimer.intervalId);
       activeTimer.isComplete = true;
@@ -683,10 +692,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       stopAllGroundingGuides();
       playChime(true);
+
+      // Auto transition to reflection screen after 1 second
+      setTimeout(() => {
+        timerView.classList.remove('active');
+        setTimeout(() => {
+          reflectionView.classList.add('active');
+        }, 200);
+      }, 1000);
     }
   }
 
-  function finishSession(bypassed) {
+  function finishSession(outcome, pivotAction = null) {
     clearInterval(activeTimer.intervalId);
     stopAllGroundingGuides();
     stopCarousel();
@@ -704,19 +721,16 @@ document.addEventListener('DOMContentLoaded', () => {
       elapsed: elapsed,
       timestamp: new Date().toISOString(),
       calmingMode: activeTimer.calmingMode,
-      status: bypassed ? 'success' : 'aborted'
+      status: outcome, // pivot, proceed, slip, aborted
+      pivotAction: pivotAction
     };
 
     appState.history.unshift(session);
 
-    if (bypassed) {
+    if (outcome === 'pivot' || outcome === 'proceed') {
       appState.totalSuccesses++;
-      
-      // Calculate daily streak logic (simplified)
-      // Check last success date and increment streak if yesterday, or maintain if today.
       updateStreak();
     } else {
-      // Aborted. Reset streak.
       appState.streak = 0;
       playChime(false);
     }
@@ -724,8 +738,9 @@ document.addEventListener('DOMContentLoaded', () => {
     saveState();
     updateDashboardUI();
 
-    // Toggle back to dashboard input
+    // Reset views
     timerView.classList.remove('active');
+    reflectionView.classList.remove('active');
     setTimeout(() => {
       triggerInputView.classList.add('active');
       impulseInput.value = '';
@@ -735,8 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateStreak() {
     if (appState.history.length === 0) return;
     
-    // Simply increment streak for testing, resetting if last successful log was over 48 hours ago
-    const successes = appState.history.filter(h => h.status === 'success');
+    const successes = appState.history.filter(h => h.status === 'pivot' || h.status === 'proceed');
     if (successes.length <= 1) {
       appState.streak = 1;
       return;
@@ -747,13 +761,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const diffHours = (lastTime - prevTime) / (1000 * 60 * 60);
 
-    if (diffHours < 36) { // inside 1.5 days interval
-      // Determine if they are on a new calendar day
+    if (diffHours < 36) { 
       if (lastTime.getDate() !== prevTime.getDate()) {
         appState.streak++;
       }
     } else {
-      appState.streak = 1; // streak broke, reset to 1
+      appState.streak = 1; 
     }
   }
 
@@ -761,26 +774,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // ANALYTICS & DASHBOARD RENDERING
   // ==========================================
   function updateDashboardUI() {
-    // Stats indicators
     streakCounter.innerText = appState.streak;
     totalSuccesses.innerText = appState.totalSuccesses;
 
-    // Rate calculations
     const totalSessions = appState.history.length;
-    const successesCount = appState.history.filter(h => h.status === 'success').length;
+    const successesCount = appState.history.filter(h => h.status === 'pivot' || h.status === 'proceed').length;
     const bypassRate = totalSessions > 0 ? Math.round((successesCount / totalSessions) * 100) : 0;
     bypassRateElement.innerText = `${bypassRate}%`;
 
-    // Total time count
     const totalSecs = appState.history.reduce((acc, curr) => acc + curr.elapsed, 0);
     const totalMins = Math.round(totalSecs / 60);
     totalMinsElement.innerText = `${totalMins}m`;
 
-    // History Log visual rendering
     renderHistoryLog();
-
-    // Graph visual rendering
     renderCategoryChart();
+    renderHeatmap();
   }
 
   function renderHistoryLog() {
@@ -791,7 +799,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Limit to latest 10 items in DOM
     const items = appState.history.slice(0, 10);
     items.forEach(session => {
       const li = document.createElement('li');
@@ -801,13 +808,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const dateStr = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
+      let badgeText = 'Aborted';
+      let badgeClass = 'aborted';
+      if (session.status === 'pivot') {
+        badgeText = `Pivoted ➔ ${session.pivotAction}`;
+        badgeClass = 'success';
+      } else if (session.status === 'proceed') {
+        badgeText = 'Proceeded';
+        badgeClass = 'success';
+      } else if (session.status === 'slip') {
+        badgeText = 'Slipped';
+        badgeClass = 'aborted';
+      }
+
       li.innerHTML = `
         <div class="history-item-details">
           <span class="history-item-action">${escapeHTML(session.impulse)}</span>
           <span class="history-item-meta">${dateStr} at ${timeStr} • ${session.duration}s</span>
         </div>
-        <span class="history-status-badge ${session.status === 'success' ? 'success' : 'aborted'}">
-          ${session.status === 'success' ? 'Bypassed' : 'Aborted'}
+        <span class="history-status-badge ${badgeClass}" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          ${badgeText}
         </span>
       `;
       historyList.appendChild(li);
@@ -819,7 +839,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const barsContainer = document.getElementById('chart-bars');
     barsContainer.innerHTML = '';
 
-    // Classify impulsives
     const categories = {
       'Social Media': ['instagram', 'reddit', 'tiktok', 'facebook', 'twitter', 'social', 'feed', 'phone'],
       'Shopping': ['buy', 'shop', 'amazon', 'purchase', 'spend', 'store'],
@@ -836,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     appState.history.forEach(session => {
-      if (session.status !== 'success') return; // only chart successes
+      if (session.status !== 'pivot' && session.status !== 'proceed') return; 
       const action = session.impulse.toLowerCase();
       let matched = false;
 
@@ -854,23 +873,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const entries = Object.entries(counts);
-    const maxVal = Math.max(...entries.map(e => e[1]), 1); // avoid division by zero
+    const maxVal = Math.max(...entries.map(e => e[1]), 1); 
 
     let yOffset = 20;
     entries.forEach(([catName, val]) => {
-      // Calculate width (max width 160px from x=75)
       const barWidth = (val / maxVal) * 160;
-      
       const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
       
-      // Label
       const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
       label.setAttribute("x", "10");
       label.setAttribute("y", yOffset + 7);
       label.setAttribute("class", "chart-label");
       label.textContent = catName;
       
-      // Bar background
       const barBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       barBg.setAttribute("x", "85");
       barBg.setAttribute("y", yOffset);
@@ -879,7 +894,6 @@ document.addEventListener('DOMContentLoaded', () => {
       barBg.setAttribute("rx", "4");
       barBg.setAttribute("fill", "rgba(255, 255, 255, 0.02)");
       
-      // Active Bar with gradient filling
       const bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       bar.setAttribute("x", "85");
       bar.setAttribute("y", yOffset);
@@ -888,7 +902,6 @@ document.addEventListener('DOMContentLoaded', () => {
       bar.setAttribute("rx", "4");
       bar.setAttribute("fill", `url(#bar-grad-${yOffset})`);
 
-      // Create unique linear gradient for each bar to follow design aesthetics
       const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
       const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
       grad.setAttribute("id", `bar-grad-${yOffset}`);
@@ -909,7 +922,6 @@ document.addEventListener('DOMContentLoaded', () => {
       grad.appendChild(stop2);
       defs.appendChild(grad);
       
-      // Value number text
       const valText = document.createElementNS("http://www.w3.org/2000/svg", "text");
       valText.setAttribute("x", "255");
       valText.setAttribute("y", yOffset + 7);
@@ -923,12 +935,58 @@ document.addEventListener('DOMContentLoaded', () => {
       group.appendChild(valText);
 
       barsContainer.appendChild(group);
-      
       yOffset += 24;
     });
   }
 
-  // Helper sanitization
+  // Generate 30-day Contribution Heatmap Grid
+  function renderHeatmap() {
+    const grid = document.getElementById('heatmap-grid');
+    const heatmapTotal = document.getElementById('heatmap-total');
+    grid.innerHTML = '';
+
+    // Calculate dates array: last 30 days
+    const days = [];
+    const today = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      days.push(d);
+    }
+
+    let activeDaysCount = 0;
+
+    days.forEach(date => {
+      const dateStr = date.toDateString();
+      
+      // Filter history for successful entries on this date
+      const successesOnDay = appState.history.filter(h => {
+        if (h.status !== 'pivot' && h.status !== 'proceed') return false;
+        const hDate = new Date(h.timestamp);
+        return hDate.toDateString() === dateStr;
+      }).length;
+
+      // Classify activity level: 0, 1-2, 3-4, 5+
+      let level = 0;
+      if (successesOnDay > 0) {
+        activeDaysCount++;
+        if (successesOnDay <= 2) level = 1;
+        else if (successesOnDay <= 4) level = 2;
+        else level = 3;
+      }
+
+      const cell = document.createElement('div');
+      cell.className = `heatmap-cell level-${level}`;
+      
+      const readableDate = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      cell.title = `${readableDate}: ${successesOnDay} impulse${successesOnDay !== 1 ? 's' : ''} bypassed`;
+      
+      grid.appendChild(cell);
+    });
+
+    heatmapTotal.innerText = `${activeDaysCount}/30 active days`;
+  }
+
   function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, 
       tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
@@ -945,6 +1003,19 @@ document.addEventListener('DOMContentLoaded', () => {
       impulseInput.value = btn.dataset.value;
       impulseInput.focus();
     });
+  });
+
+  // Dynamic selector breathing group display toggler
+  groundingSelect.addEventListener('change', (e) => {
+    breathingTechGroup.style.display = (e.target.value === 'breath') ? 'block' : 'none';
+  });
+
+  // Theme switcher trigger
+  themeSelect.addEventListener('change', (e) => {
+    const theme = e.target.value;
+    document.body.dataset.theme = theme;
+    appState.settings.theme = theme;
+    saveState();
   });
 
   // Sound chip selector clicks
@@ -968,37 +1039,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const impulseVal = impulseInput.value.trim();
     if (!impulseVal) return;
 
-    // Read configured duration
     const durationRadio = document.querySelector('input[name="duration"]:checked');
     const seconds = parseInt(durationRadio ? durationRadio.value : 90);
-
-    // Read calming mode selection
-    const calmingMode = document.getElementById('grounding-select').value;
+    const calmingMode = groundingSelect.value;
 
     startPauseTimer(impulseVal, seconds, calmingMode);
   });
 
-  // Abort / Complete clicks
+  // Abort clicks
   abortBtn.addEventListener('click', () => {
     if (appState.settings.strictMode && (activeTimer.totalDuration - activeTimer.timeLeft >= 15)) {
-      return; // strict mode locked
+      return; 
     }
-    finishSession(false);
+    finishSession('aborted');
   });
 
-  completeBtn.addEventListener('click', () => {
-    if (activeTimer.isComplete) {
-      finishSession(true);
-    }
+  // Reflection mode buttons
+  reflectionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      reflectionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      selectedOutcome = btn.dataset.outcome;
+      pivotOptionsGroup.style.display = (selectedOutcome === 'pivot') ? 'block' : 'none';
+    });
+  });
+
+  // Pivot option chips
+  pivotChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      pivotChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedPivotAction = chip.dataset.pivot;
+    });
+  });
+
+  // Save reflection log
+  saveReflectionBtn.addEventListener('click', () => {
+    finishSession(
+      selectedOutcome, 
+      selectedOutcome === 'pivot' ? selectedPivotAction : null
+    );
   });
 
   // Esc key listener to exit timer
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && activeTimer.intervalId) {
       if (appState.settings.strictMode && (activeTimer.totalDuration - activeTimer.timeLeft >= 15)) {
-        return; // locked
+        return; 
       }
-      finishSession(false);
+      finishSession('aborted');
     }
   });
 
@@ -1053,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('close-intro-btn').addEventListener('click', () => {
     toggleModal('intro-modal', false);
-    initAudio(); // warm up context
+    initAudio(); 
   });
 
   document.getElementById('reset-tutorial-btn').addEventListener('click', (e) => {

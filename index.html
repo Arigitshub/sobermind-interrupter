@@ -108,6 +108,15 @@
               </select>
             </div>
 
+            <div class="grounding-preference" id="breathing-tech-group">
+              <label for="breathing-tech-select">Breathing Rhythm:</label>
+              <select id="breathing-tech-select">
+                <option value="478">4-7-8 Relaxing Breath (In 4s, Hold 7s, Out 8s)</option>
+                <option value="box">Box Breathing (In 4s, Hold 4s, Out 4s, Hold 4s)</option>
+                <option value="coherent">Coherent Breathing (In 5s, Out 5s)</option>
+              </select>
+            </div>
+
             <button type="submit" class="btn-primary" id="start-interruption-btn">
               <span>Initiate 90s Pause</span>
               <div class="btn-glow"></div>
@@ -272,6 +281,50 @@
 
           </div>
         </div>
+
+        <!-- Reflection Screen (Visible after timer completes) -->
+        <div id="reflection-view" class="view-panel">
+          <div class="panel-header">
+            <h2>Pause Complete</h2>
+            <p class="subtitle">Your dopamine urge has peaked. Make a conscious choice below.</p>
+          </div>
+          <div class="reflection-layout">
+            <div class="reflection-modes">
+              <button type="button" class="reflection-btn pivot active" data-outcome="pivot">
+                <span class="icon">🔄</span>
+                <span class="title">Healthy Pivot</span>
+                <span class="desc">Choose a replacement activity</span>
+              </button>
+              <button type="button" class="reflection-btn proceed" data-outcome="proceed">
+                <span class="icon">🧘</span>
+                <span class="title">Proceed Mindfully</span>
+                <span class="desc">Proceed with conscious awareness</span>
+              </button>
+              <button type="button" class="reflection-btn slip" data-outcome="slip">
+                <span class="icon">⚠️</span>
+                <span class="title">Autopilot Slip</span>
+                <span class="desc">Acknowledge an impulsive lapse</span>
+              </button>
+            </div>
+
+            <!-- Contextual replacement pivots (visible if Pivot is active) -->
+            <div class="pivot-options-group" id="pivot-options-group">
+              <label>Select your replacement action:</label>
+              <div class="pivot-chips">
+                <button type="button" class="pivot-chip active" data-pivot="Drink Water">💧 Drink Water</button>
+                <button type="button" class="pivot-chip" data-pivot="Somatic Stretching">🧘 Stretch / Walk</button>
+                <button type="button" class="pivot-chip" data-pivot="Deep Focus Task">⏳ Focus on Work</button>
+                <button type="button" class="pivot-chip" data-pivot="Read 1 Page">📖 Read a Book</button>
+                <button type="button" class="pivot-chip" data-pivot="Gratitude Check">🙏 Gratitude Pause</button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-primary" id="save-reflection-btn">
+              <span>Log Conscious Choice</span>
+              <div class="btn-glow"></div>
+            </button>
+          </div>
+        </div>
       </section>
 
       <!-- RIGHT COLUMN: Dashboard & Analytics & Ambient Control -->
@@ -332,6 +385,25 @@
           </div>
         </section>
 
+        <!-- 30-Day Consistency Heatmap -->
+        <section class="glass-panel side-card">
+          <div class="card-header">
+            <h3>Consistency Map</h3>
+            <span class="card-action-btn" style="text-decoration: none; cursor: default; color: var(--text-muted);" id="heatmap-total">0/30 active days</span>
+          </div>
+          <div class="heatmap-wrapper">
+            <div class="heatmap-grid" id="heatmap-grid"></div>
+            <div class="heatmap-legend">
+              <span>Less</span>
+              <span class="box level-0"></span>
+              <span class="box level-1"></span>
+              <span class="box level-2"></span>
+              <span class="box level-3"></span>
+              <span>More</span>
+            </div>
+          </div>
+        </section>
+
         <!-- Session History Log -->
         <section class="glass-panel side-card scrollable">
           <div class="card-header">
@@ -366,6 +438,21 @@
               <div class="toggle-switch">
                 <input type="checkbox" id="strict-mode-toggle">
                 <label for="strict-mode-toggle"></label>
+              </div>
+            </div>
+            
+            <div class="settings-item theme-settings">
+              <div class="settings-desc">
+                <span class="label">Aura Palette Theme</span>
+                <span class="sub-label">Switch color theme coordinates</span>
+              </div>
+              <div class="theme-select-container">
+                <select id="theme-select" style="padding: 0.4rem 0.8rem; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); outline: none; cursor: pointer;">
+                  <option value="nebula">Space Nebula</option>
+                  <option value="forest">Forest Zen</option>
+                  <option value="cyberpunk">Cyber Focus</option>
+                  <option value="void">Silent Void</option>
+                </select>
               </div>
             </div>
           </div>
