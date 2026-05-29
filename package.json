@@ -7,7 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "cross-env DEPLOY_TARGET=gh-pages npm run build && gh-pages -d dist",
-    "deploy:surge": "npm run build && surge dist sobermind-interrupter.surge.sh"
+    "deploy:surge": "npm run build && surge dist sobermind.surge.sh"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
