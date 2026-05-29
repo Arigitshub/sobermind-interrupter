@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/sobermind-interrupter/',
+  base: process.env.DEPLOY_TARGET === 'gh-pages' ? '/sobermind-interrupter/' : '/',
   build: {
     outDir: 'dist',
   }
