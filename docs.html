@@ -193,13 +193,12 @@
           <h2>5. Terminal Command: `sobermind`</h2>
           <p>You can run the SoberMind interrupter directly from your command terminal as a global command. This allows you to pause automatic actions inside your terminal workflow.</p>
           
-          <h3 style="color: var(--text-primary); font-size: 1.1rem; margin: 1rem 0 0.5rem 0;">Option A: Install via Pip (Recommended)</h3>
-          <p>Install the repository locally in editable mode. This registers the executable command <code>sobermind</code> inside your Python scripts directory:</p>
+          <h3 style="color: var(--text-primary); font-size: 1.1rem; margin: 1rem 0 0.5rem 0;">Option A: Install via Pip (Official PyPI Release)</h3>
+          <p>SoberMind is published globally on the Python Package Index. Install it directly on your system with one command:</p>
           <div class="code-block-container">
-            <span class="code-comment"># Run this inside the project root folder</span><br>
-            pip install -e .
+            pip install sobermind
           </div>
-          <p>Once installed, execute the command from any directory:</p>
+          <p>Once installed, execute the command from any directory or terminal session:</p>
           <div class="code-block-container">
             sobermind <span class="code-string">"browsing social media"</span> --duration <span class="code-keyword">90</span>
           </div>
