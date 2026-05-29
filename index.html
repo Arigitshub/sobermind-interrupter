@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoberMind // Autopilot Interrupter</title>
+  <meta name="description" content="Interrupt automatic actions and impulsive habits with a premium 90-second cognitive delay, guided somatic breathing, and sensory reframing tools.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <script type="module" crossorigin src="/sobermind-interrupter/assets/index-BQYe9qWW.js"></script>
+  <link rel="stylesheet" crossorigin href="/sobermind-interrupter/assets/index-CtDTH52H.css">
+</head>
+<body>
+
+  <!-- Ambient Particle Canvas Background -->
+  <canvas id="ambient-canvas"></canvas>
+  <div class="radial-glow"></div>
+
+  <!-- Main Grid Layout -->
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="url(#logo-grad)" stroke-width="2.5" />
+            <path d="M12 6V12L16 14" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round" />
+            <defs>
+              <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-cyan)" />
+                <stop offset="100%" stop-color="var(--accent-magenta)" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1>SoberMind<span class="version">v1.2</span></h1>
+      </div>
+      <div class="header-stats">
+        <div class="stat-badge tooltip" title="Daily consecutive successful interruptions">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          <span>Streak: <strong id="streak-counter">0</strong> days</span>
+        </div>
+        <div class="stat-badge tooltip" title="Total times autopilot was successfully interrupted">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Successes: <strong id="total-successes">0</strong></span>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- LEFT SECTION: Interrupter Form & Timer -->
+      <section class="main-card glass-panel" id="interrupter-section">
+        
+        <!-- Standard Input Screen (Autopilot Trigger) -->
+        <div id="trigger-input-view" class="view-panel active">
+          <div class="panel-header">
+            <h2>Interrupt the Autopilot</h2>
+            <p class="subtitle">Pause impulsive actions. Give your brain 90 seconds to re-calibrate.</p>
+          </div>
+
+          <form id="impulse-form" class="impulse-form">
+            <div class="form-group">
+              <label for="impulse-input">What automatic action are you about to take?</label>
+              <input type="text" id="impulse-input" placeholder="e.g., open Instagram, grab a sugary snack, browse shopping site" required autocomplete="off">
+            </div>
+
+            <div class="shortcut-tags">
+              <span class="tag-label">Common Triggers:</span>
+              <button type="button" class="tag-btn" data-value="Open Social Media">📱 Social Media</button>
+              <button type="button" class="tag-btn" data-value="Browse Shopping Sites">🛒 Online Shopping</button>
+              <button type="button" class="tag-btn" data-value="Snacking out of Boredom">🍿 Boredom Eating</button>
+              <button type="button" class="tag-btn" data-value="Check news/feeds">📰 Feed Scrolling</button>
+              <button type="button" class="tag-btn" data-value="Procrastinate on tasks">⏳ Procrastination</button>
+            </div>
+
+            <div class="duration-selector">
+              <label>Interrupt Duration:</label>
+              <div class="radio-group">
+                <label class="radio-btn">
+                  <input type="radio" name="duration" value="60">
+                  <span>60s</span>
+                </label>
+                <label class="radio-btn">
+                  <input type="radio" name="duration" value="90" checked>
+                  <span>90s (Recommended)</span>
+                </label>
+                <label class="radio-btn">
+                  <input type="radio" name="duration" value="120">
+                  <span>2m</span>
+                </label>
+                <label class="radio-btn">
+                  <input type="radio" name="duration" value="180">
+                  <span>3m</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="grounding-preference">
+              <label for="grounding-select">Calming Mode:</label>
+              <select id="grounding-select">
+                <option value="breath">Guided Breathing (4-7-8)</option>
+                <option value="sensory">Somatic Sensory Check (5-4-3-2-1)</option>
+                <option value="reframing">Cognitive Reframing Questions</option>
+                <option value="ambient">Silent Zen / Floating Space</option>
+              </select>
+            </div>
+
+            <div class="grounding-preference" id="breathing-tech-group">
+              <label for="breathing-tech-select">Breathing Rhythm:</label>
+              <select id="breathing-tech-select">
+                <option value="478">4-7-8 Relaxing Breath (In 4s, Hold 7s, Out 8s)</option>
+                <option value="box">Box Breathing (In 4s, Hold 4s, Out 4s, Hold 4s)</option>
+                <option value="coherent">Coherent Breathing (In 5s, Out 5s)</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn-primary" id="start-interruption-btn">
+              <span>Initiate 90s Pause</span>
+              <div class="btn-glow"></div>
+            </button>
+          </form>
+        </div>
+
+        <!-- Timer Screen (Visible during active interruption) -->
+        <div id="timer-view" class="view-panel">
+          <div class="timer-layout">
+            
+            <!-- Intention Display banner -->
+            <div class="intention-banner">
+              <div class="tag-icon">⚠️</div>
+              <div class="intention-content">
+                <span class="label">Impulse Interrupted:</span>
+                <p id="target-impulse-text">Open Instagram</p>
+              </div>
+            </div>
+
+            <!-- Timer Circle -->
+            <div class="circle-timer-container">
+              <svg class="progress-ring" width="220" height="220">
+                <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" r="94" cx="110" cy="110" />
+                <circle class="progress-ring__circle" stroke="url(#timer-grad)" stroke-width="12" stroke-linecap="round" fill="transparent" r="94" cx="110" cy="110" />
+                <defs>
+                  <linearGradient id="timer-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="var(--accent-cyan)" />
+                    <stop offset="50%" stop-color="var(--secondary-green)" />
+                    <stop offset="100%" stop-color="var(--accent-magenta)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="timer-center-text">
+                <div class="time-left" id="timer-digits">90</div>
+                <div class="instruction-text" id="breathing-state">Breathe in</div>
+              </div>
+            </div>
+
+            <!-- Interactive Grounding Prompts (Contextualized depending on selected Calming Mode) -->
+            <div class="grounding-content-container">
+              
+              <!-- Breathing Guide Prompt -->
+              <div id="breath-prompt-view" class="grounding-view active">
+                <div class="grounding-layout">
+                  <div class="grounding-graphic">
+                    <svg viewBox="0 0 100 100" class="graphic-svg breath-graphic">
+                      <defs>
+                        <radialGradient id="breath-glow" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stop-color="var(--accent-cyan)" stop-opacity="0.3"/>
+                          <stop offset="100%" stop-color="var(--accent-cyan)" stop-opacity="0"/>
+                        </radialGradient>
+                      </defs>
+                      <circle cx="50" cy="50" r="40" fill="url(#breath-glow)" class="breath-bg-glow" />
+                      <circle cx="50" cy="50" r="30" stroke="var(--accent-cyan)" stroke-width="1.5" fill="none" stroke-dasharray="4 4" class="breath-ring-outer" />
+                      <circle cx="50" cy="50" r="20" stroke="var(--accent-cyan)" stroke-width="2.5" fill="none" class="breath-ring-inner" />
+                    </svg>
+                  </div>
+                  <div class="grounding-text-side">
+                    <p class="guide-lead">Follow the rhythmic pulsing of the timer circle.</p>
+                    <div class="breath-visualizer-container">
+                      <div class="breath-bubble" id="breath-bubble"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sensory Guide View -->
+              <div id="sensory-prompt-view" class="grounding-view">
+                <div class="grounding-layout">
+                  <div class="grounding-graphic">
+                    <svg viewBox="0 0 100 100" class="graphic-svg sensory-graphic">
+                      <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.06)" stroke-width="1" fill="none" />
+                      <circle cx="50" cy="50" r="28" stroke="rgba(255,255,255,0.06)" stroke-width="1" fill="none" />
+                      <line x1="50" y1="5" x2="50" y2="95" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+                      <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+                      <circle cx="50" cy="50" r="14" stroke="var(--secondary-green)" stroke-width="1.5" fill="none" class="sensory-center-ring" />
+                      <line x1="50" y1="50" x2="78" y2="22" stroke="var(--secondary-green)" stroke-width="2" stroke-linecap="round" class="sensory-sweep" />
+                      <circle cx="68" cy="32" r="3" fill="var(--secondary-green)" class="sensory-blip" />
+                    </svg>
+                  </div>
+                  <div class="grounding-text-side">
+                    <p class="guide-lead">Ground your senses. Answer locally in the space below:</p>
+                    <div class="sensory-step-card" id="sensory-card">
+                      <span class="sensory-label" id="sensory-step-title">Name 3 things you can see right now:</span>
+                      <input type="text" id="sensory-step-input" placeholder="Enter list, press Enter..." autocomplete="off">
+                      <div class="sensory-progress">
+                        <span class="step-indicator" id="sensory-step-dots">● ○ ○ ○ ○</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cognitive Reframing View -->
+              <div id="reframing-prompt-view" class="grounding-view">
+                <div class="grounding-layout">
+                  <div class="grounding-graphic">
+                    <svg viewBox="0 0 100 100" class="graphic-svg reframing-graphic">
+                      <path d="M20,50 L50,20 L80,50 L50,80 Z" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" fill="none" />
+                      <path d="M50,20 L50,80 M20,50 L80,50" stroke="rgba(255,255,255,0.08)" stroke-width="1" fill="none" />
+                      <circle cx="50" cy="20" r="4.5" fill="var(--accent-magenta)" class="neural-node node-1" />
+                      <circle cx="80" cy="50" r="4.5" fill="var(--accent-orange)" class="neural-node node-2" />
+                      <circle cx="50" cy="80" r="4.5" fill="var(--accent-magenta)" class="neural-node node-3" />
+                      <circle cx="20" cy="50" r="4.5" fill="var(--accent-orange)" class="neural-node node-4" />
+                      <circle cx="50" cy="50" r="6" fill="#fff" class="neural-node node-center" />
+                    </svg>
+                  </div>
+                  <div class="grounding-text-side">
+                    <p class="guide-lead">Reflect on this question before making a choice:</p>
+                    <div class="reframing-card">
+                      <blockquote id="reframing-question-text">"What emotion am I attempting to soothe or avoid with this action?"</blockquote>
+                      <textarea id="reframing-textarea" placeholder="Optionally note your thoughts here (they remain strictly local)..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Silent Zen View -->
+              <div id="ambient-prompt-view" class="grounding-view">
+                <div class="grounding-layout">
+                  <div class="grounding-graphic">
+                    <svg viewBox="0 0 100 100" class="graphic-svg zen-graphic">
+                      <defs>
+                        <linearGradient id="zen-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="var(--accent-cyan)" />
+                          <stop offset="100%" stop-color="var(--accent-magenta)" />
+                        </linearGradient>
+                      </defs>
+                      <ellipse cx="50" cy="78" rx="28" ry="10" fill="none" stroke="url(#zen-grad)" stroke-width="2" class="zen-stone-3" />
+                      <ellipse cx="50" cy="58" rx="20" ry="8" fill="none" stroke="url(#zen-grad)" stroke-width="2" class="zen-stone-2" />
+                      <ellipse cx="50" cy="40" rx="14" ry="6" fill="none" stroke="url(#zen-grad)" stroke-width="2" class="zen-stone-1" />
+                      <circle cx="50" cy="24" r="5" fill="#fff" class="zen-drop" />
+                    </svg>
+                  </div>
+                  <div class="grounding-text-side">
+                    <p class="guide-lead">Allow your thoughts to settle like sediment in still water.</p>
+                    <div class="zen-quote-container">
+                      <p id="zen-quote">"Rule your mind or it will rule you." — Horace</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Cognitive Prompt Slider (Dynamic, updates every 15s) -->
+            <div class="cognitive-carousel" id="cognitive-carousel">
+              <span class="quote-symbol">“</span>
+              <p id="carousel-prompt">Feel the floor beneath your feet. Breathe deeply.</p>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="timer-controls">
+              <button class="btn-outline btn-abort" id="abort-btn" type="button">
+                <span>Cancel Pause</span>
+              </button>
+              <button class="btn-primary btn-success-finish disabled" id="complete-btn" type="button">
+                <span>Confirm Autopilot Bypassed</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Reflection Screen (Visible after timer completes) -->
+        <div id="reflection-view" class="view-panel">
+          <div class="panel-header">
+            <h2>Pause Complete</h2>
+            <p class="subtitle">Your dopamine urge has peaked. Make a conscious choice below.</p>
+          </div>
+          <div class="reflection-layout">
+            <div class="reflection-modes">
+              <button type="button" class="reflection-btn pivot active" data-outcome="pivot">
+                <span class="icon">🔄</span>
+                <span class="title">Healthy Pivot</span>
+                <span class="desc">Choose a replacement activity</span>
+              </button>
+              <button type="button" class="reflection-btn proceed" data-outcome="proceed">
+                <span class="icon">🧘</span>
+                <span class="title">Proceed Mindfully</span>
+                <span class="desc">Proceed with conscious awareness</span>
+              </button>
+              <button type="button" class="reflection-btn slip" data-outcome="slip">
+                <span class="icon">⚠️</span>
+                <span class="title">Autopilot Slip</span>
+                <span class="desc">Acknowledge an impulsive lapse</span>
+              </button>
+            </div>
+
+            <!-- Contextual replacement pivots (visible if Pivot is active) -->
+            <div class="pivot-options-group" id="pivot-options-group">
+              <label>Select your replacement action:</label>
+              <div class="pivot-chips">
+                <button type="button" class="pivot-chip active" data-pivot="Drink Water">💧 Drink Water</button>
+                <button type="button" class="pivot-chip" data-pivot="Somatic Stretching">🧘 Stretch / Walk</button>
+                <button type="button" class="pivot-chip" data-pivot="Deep Focus Task">⏳ Focus on Work</button>
+                <button type="button" class="pivot-chip" data-pivot="Read 1 Page">📖 Read a Book</button>
+                <button type="button" class="pivot-chip" data-pivot="Gratitude Check">🙏 Gratitude Pause</button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-primary" id="save-reflection-btn">
+              <span>Log Conscious Choice</span>
+              <div class="btn-glow"></div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: Dashboard & Analytics & Ambient Control -->
+      <aside class="side-panel">
+        
+        <!-- Quick Stats and Analytics Card -->
+        <section class="glass-panel side-card">
+          <div class="card-header">
+            <h3>Mindfulness Analytics</h3>
+            <span class="card-action-btn tooltip" title="Success metrics over all-time sessions" id="clear-stats-btn">Reset Logs</span>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="num" id="stat-bypass-rate">0%</span>
+              <span class="label">Bypass Rate</span>
+            </div>
+            <div class="stat-box">
+              <span class="num" id="stat-total-mins">0m</span>
+              <span class="label">Time Paused</span>
+            </div>
+          </div>
+          
+          <div class="graph-container">
+            <span class="graph-title">Impulses by Category</span>
+            <div class="chart-wrapper">
+              <!-- Custom dynamic SVG Chart -->
+              <svg id="category-chart" viewBox="0 0 300 130">
+                <!-- Grid Lines -->
+                <line x1="40" y1="10" x2="280" y2="10" stroke="rgba(255,255,255,0.05)" />
+                <line x1="40" y1="50" x2="280" y2="50" stroke="rgba(255,255,255,0.05)" />
+                <line x1="40" y1="90" x2="280" y2="90" stroke="rgba(255,255,255,0.05)" />
+                <!-- Bars dynamic insertion via script -->
+                <g id="chart-bars"></g>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- Calming Sound & Soundscapes widget -->
+        <section class="glass-panel side-card">
+          <div class="card-header">
+            <h3>Ambient Soundscape</h3>
+            <div class="toggle-switch">
+              <input type="checkbox" id="ambient-audio-toggle">
+              <label for="ambient-audio-toggle"></label>
+            </div>
+          </div>
+          <div class="sound-controls">
+            <div class="sound-type-selector">
+              <button class="sound-chip active" data-sound="binaural">🧘 Binaural Theta</button>
+              <button class="sound-chip" data-sound="rain">🌧️ Synthetic Rain</button>
+              <button class="sound-chip" data-sound="drone">🌌 Dark Drone</button>
+            </div>
+            <div class="volume-slider">
+              <label for="volume-range">Volume:</label>
+              <input type="range" id="volume-range" min="0" max="1" step="0.05" value="0.5">
+            </div>
+          </div>
+        </section>
+
+        <!-- 30-Day Consistency Heatmap -->
+        <section class="glass-panel side-card">
+          <div class="card-header">
+            <h3>Consistency Map</h3>
+            <span class="card-action-btn" style="text-decoration: none; cursor: default; color: var(--text-muted);" id="heatmap-total">0/30 active days</span>
+          </div>
+          <div class="heatmap-wrapper">
+            <div class="heatmap-grid" id="heatmap-grid"></div>
+            <div class="heatmap-legend">
+              <span>Less</span>
+              <span class="box level-0"></span>
+              <span class="box level-1"></span>
+              <span class="box level-2"></span>
+              <span class="box level-3"></span>
+              <span>More</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Session History Log -->
+        <section class="glass-panel side-card scrollable">
+          <div class="card-header">
+            <h3>Autopilot Interruption Log</h3>
+          </div>
+          <ul class="history-list" id="history-list">
+            <li class="history-empty">No impulses logged yet. Start a pause to log your success!</li>
+          </ul>
+        </section>
+
+        <!-- Customize & Settings Card -->
+        <section class="glass-panel side-card">
+          <div class="card-header">
+            <h3>Custom Settings</h3>
+          </div>
+          <div class="settings-list">
+            <div class="settings-item">
+              <div class="settings-desc">
+                <span class="label">Particle Background</span>
+                <span class="sub-label">Renders interactive stars canvas</span>
+              </div>
+              <div class="toggle-switch">
+                <input type="checkbox" id="particle-bg-toggle" checked>
+                <label for="particle-bg-toggle"></label>
+              </div>
+            </div>
+            <div class="settings-item">
+              <div class="settings-desc">
+                <span class="label">Strict Pause Enforcement</span>
+                <span class="sub-label">Disables canceling after 15 seconds</span>
+              </div>
+              <div class="toggle-switch">
+                <input type="checkbox" id="strict-mode-toggle">
+                <label for="strict-mode-toggle"></label>
+              </div>
+            </div>
+            
+            <div class="settings-item theme-settings">
+              <div class="settings-desc">
+                <span class="label">Aura Palette Theme</span>
+                <span class="sub-label">Switch color theme coordinates</span>
+              </div>
+              <div class="theme-select-container">
+                <select id="theme-select" style="padding: 0.4rem 0.8rem; background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); outline: none; cursor: pointer;">
+                  <option value="nebula">Space Nebula</option>
+                  <option value="forest">Forest Zen</option>
+                  <option value="cyberpunk">Cyber Focus</option>
+                  <option value="void">Silent Void</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </aside>
+    </main>
+
+    <!-- Footer with semantic details and legal compliance -->
+    <footer class="app-footer">
+      <p>© 2026 SoberMind Autopilot Interrupter. Designed for mindfulness & dopamine reset.</p>
+      <div class="footer-links">
+        <span>Press <kbd>Esc</kbd> to exit active timer</span>
+        <a href="#" id="reset-tutorial-btn">Restart Intro</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Interactive Tutorial Modals / Overlay -->
+  <div class="modal-overlay" id="intro-modal">
+    <div class="modal-content glass-panel animate-zoom">
+      <div class="modal-logo">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="url(#modal-grad)" stroke-width="2" />
+          <path d="M12 6V12L16 14" stroke="url(#modal-grad)" stroke-width="2" stroke-linecap="round" />
+          <defs>
+            <linearGradient id="modal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--accent-cyan)" />
+              <stop offset="100%" stop-color="var(--accent-magenta)" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <h2>Welcome to SoberMind</h2>
+      <p>Modern apps are engineered to capture your attention and bypass conscious choice. The **90-Second Rule** states that it takes about 90 seconds for an emotional chemical surge to fully process and dissipate in the body, provided we don't fuel it with automatic thinking.</p>
+      <div class="modal-tips">
+        <div class="modal-tip">
+          <span class="tip-num">1</span>
+          <p><strong>Note the impulse:</strong> Type exactly what you're intending to do.</p>
+        </div>
+        <div class="modal-tip">
+          <span class="tip-num">2</span>
+          <p><strong>Choose grounding:</strong> Follow the rhythmic breath circles, sensory inputs, or cognitive reflections.</p>
+        </div>
+        <div class="modal-tip">
+          <span class="tip-num">3</span>
+          <p><strong>Decide with clarity:</strong> Once the 90 seconds are complete, consciously choose whether to proceed or pivot.</p>
+        </div>
+      </div>
+      <button class="btn-primary" id="close-intro-btn">
+        <span>Get Started</span>
+        <div class="btn-glow"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- JS Implementation -->
+</body>
+</html>
