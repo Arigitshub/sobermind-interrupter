@@ -1,66 +1,92 @@
-# SoberMind // Autopilot Interrupter
+# 🌌 SoberMind // Autopilot Interrupter
 
-SoberMind is a premium, single-page mindfulness and impulse-control web application designed to interrupt automatic behaviors (such as phone checking, emotional snacking, or impulsive shopping) using a visual countdown timer, somatic breathing exercises, and cognitive reframing prompts.
+> **Interrupt automatic behaviors, process dopamine cravings, and regain conscious control using the 90-Second Rule.**
 
----
-
-## ✨ Features
-
-1. **Autopilot Pause Timer (90-Second Rule)**
-   - A customizable timer (60s to 3m) built around the psychological 90-second emotional curve.
-   - SVG countdown loop synced with breath pacing.
-
-2. **Calming Grounding Modes**
-   - **Guided Breathing**: Interactive breathing circle visually expanding and shrinking in a 4-7-8 rhythm.
-   - **Somatic Sensory Check**: Stepper form utilizing the 5-4-3-2-1 grounding method.
-   - **Reframing Prompts**: Self-reflection prompts to intercept avoidance mechanisms.
-   - **Zen Space**: Silent ambient visualization with calming philosophical thoughts.
-
-3. **Ambient Sound Synthesizer (Web Audio API)**
-   - Built-in, local soundscapes (no audio files required!):
-     - **Binaural Theta**: Frequencies designed to foster calm focus.
-     - **Synthetic Rain**: Multi-layered noise sweeps mimicking rain showers.
-     - **Dark Drone**: Stacked oscillators modulated with low frequency waves for depth.
-
-4. **Visual Analytics Dashboard**
-   - Live daily success streak.
-   - Core statistics: Bypass success rate, total duration paused.
-   - SVG Bar Chart indicating logs sorted by impulse category.
-   - Scrollable session log of previous attempts.
-
-5. **Strict Mode Enforcement**
-   - Prevents the user from canceling the pause after the first 15 seconds have passed, interrupting automatic behaviors.
+SoberMind is a premium, high-aesthetic single-page web dashboard designed to intercept subconscious habits (like scrolling social media, boredom eating, or compulsive shopping). It combines interactive somatic grounding interfaces with synthetically generated, real-time ambient drone audio to guide your nervous system from reactivity back to cognitive clarity.
 
 ---
 
-## 🛠️ Technology Stack
-* **Structure:** Semantic HTML5
-* **Design & Aesthetics:** Custom CSS3 with glassmorphism, responsive grid flex layouts, variables, keyframe animations, and radial glows.
-* **Logic & Audio Engine:** Vanilla ECMAScript (JS) using HTML5 Canvas particles and the standard Web Audio API.
+## ⚡ Quick Links
+* **Live UI Layout:** [index.html](file:///D:/sobermind-interrupter/index.html)
+* **Custom Stylesheet:** [style.css](file:///D:/sobermind-interrupter/style.css)
+* **Audio & Logic Controller:** [app.js](file:///D:/sobermind-interrupter/app.js)
 
 ---
 
-## 📂 Project Structure
-* [index.html](file:///D:/sobermind-interrupter/index.html) - Structural semantic elements & modals.
-* [style.css](file:///D:/sobermind-interrupter/style.css) - Visual design, typography (Outfit & Inter), glassmorphism properties, and animations.
-* [app.js](file:///D:/sobermind-interrupter/app.js) - Sound synthesis, particle generation, countdown states, storage syncing, and event listeners.
+## 🧠 The Science: The 90-Second Rule
+> *"When a person has a reaction to something in their environment, there’s a 90-second chemical process that happens; any remaining response is just the person choosing to stay in that loop."*  
+> — **Dr. Jill Bolte Taylor, Harvard Neuroanatomist**
+
+When an impulse fires, a chemical surge floods your system. If you do not feed the impulse with automatic thoughts, the physiological urge peaks and dissipates naturally within **90 seconds**. SoberMind creates a visual and somatic container to safely navigate this critical window.
 
 ---
 
-## 🚀 Running the Project
+## 🛠️ Key Architectural Features
 
-### Option A: Local Serving (Recommended)
-You can serve the project using Vite:
-1. Open your terminal in the directory: `D:\sobermind-interrupter`
-2. Install dev dependencies:
-   ```bash
-   npm install
-   ```
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
-4. Click on the local address (usually `http://localhost:5173`) in your terminal to open it in your browser.
+| Module | Core Technology | Visual / Interactive Polish |
+| :--- | :--- | :--- |
+| **Constellation Particle Canvas** | HTML5 Canvas + Physics | Renders floating points with real-time neural connections drawn between close nodes. |
+| **Calming Web Audio Synthesizer** | Web Audio API (Oscillators) | Generates **Binaural Theta (6Hz shift)**, **Synthetic Rain sweeps**, or **Deep Space Drone** dynamically without asset loads. |
+| **Circular Countdown Ring** | SVG Vector Stroke Math | Progress ring depletion dynamically matched to clock ticks via `strokeDashoffset`. |
+| **Grounding Steppers** | Interactive JS State Engine | Visual breathing guides (4-7-8 rhythm), Somatic 5-4-3-2-1 check-ins, and cognitive logs. |
+| **Strict Mode Guard** | Javascript Lock Loop | Disables cancellation triggers after 15 seconds to prevent impulsive exits. |
 
-### Option B: Zero-Install Launch
-Since the project uses vanilla technologies and local synthetic audio generation, you can open the [index.html](file:///D:/sobermind-interrupter/index.html) file directly in any modern web browser to run the application immediately.
+---
+
+## 🧬 System Flow & Interactions
+
+```mermaid
+graph TD
+    A[User encounters habit trigger] -->|Inputs intent to dashboard| B(Initiate 90s Pause)
+    B --> C{Enforce Calming Mode}
+    C -->|Breathing| D[Pulsing 4-7-8 Breath Circle]
+    C -->|Sensory| E[5-4-3-2-1 Somatic Stepper]
+    C -->|Reframing| F[Local Micro-Journal Prompts]
+    C -->|Ambient| G[Silent Zen Text slider]
+    
+    H[Web Audio Synth Channels] -.->|Binaural / Rain / Drone| C
+    I[Interactive Star Canvas] -.->|Visual Constellation Mesh| C
+    
+    C --> J{Strict Mode Lock?}
+    J -->|Yes| K[Hide Abort Button after 15s]
+    J -->|No| L[Allow Abort with Streak Reset]
+    
+    K --> M[Countdown completes]
+    L --> M
+    M -->|Play Success Chime| N[Confirm Autopilot Bypassed]
+    N -->|Update Streak & SVG Chart| O[Synchronize to LocalStorage]
+```
+
+---
+
+## 🎨 Visual Aesthetics & Design System
+SoberMind is crafted around a **sleek space-nebula glassmorphic aesthetic**:
+- **Typography:** Display elements use the clean geometric font **Outfit** paired with **Inter** for crisp text layout.
+- **Glassmorphic Cards:** High-contrast panels designed with `backdrop-filter: blur(25px)` and delicate borders (`rgba(255,255,255,0.07)`) floating over a deep space radial gradient.
+- **Micro-Animations:** Fluid bezier scaling, pulsing breath circles, target sweeps, and glowing indicator states.
+
+---
+
+## 🚀 Setup & Launch
+
+### 1. Direct Preview (No Installation Needed)
+Since SoberMind is built using zero-dependency vanilla technologies, you can open the file [index.html](file:///D:/sobermind-interrupter/index.html) directly in any modern web browser to run the app immediately.
+
+### 2. Local Serving (Development Server)
+For live updates and development:
+```bash
+# Navigate to project folder
+cd sobermind-interrupter
+
+# Install developer dependencies (Vite)
+npm install
+
+# Run the development server
+npm run dev
+```
+Open **`http://localhost:5174/`** in your browser to inspect the application.
+
+---
+
+## 📄 License
+This project is licensed under the [MIT License](file:///D:/sobermind-interrupter/LICENSE). Feel free to customize and expand it as needed.
