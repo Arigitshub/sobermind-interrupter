@@ -25,8 +25,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- CSS Stylesheet -->
-  <script type="module" crossorigin src="/sobermind-interrupter/assets/main-OY5iLb6j.js"></script>
-  <link rel="stylesheet" crossorigin href="/sobermind-interrupter/assets/style-CRLWotp7.css">
+  <script type="module" crossorigin src="/sobermind-interrupter/assets/main-WkpWV8k8.js"></script>
+  <link rel="stylesheet" crossorigin href="/sobermind-interrupter/assets/style-BQ3MDKyA.css">
 </head>
 <body>
 
@@ -288,7 +288,7 @@
             <!-- Control Buttons -->
             <div class="timer-controls">
               <button class="btn-outline btn-abort" id="abort-btn" type="button">
-                <span>Cancel Pause</span>
+                <span>Cancel Pause <kbd class="key-badge">Esc</kbd></span>
               </button>
               <button class="btn-primary btn-success-finish disabled" id="complete-btn" type="button">
                 <span>Confirm Autopilot Bypassed</span>
@@ -310,16 +310,19 @@
                 <span class="icon">🔄</span>
                 <span class="title">Healthy Pivot</span>
                 <span class="desc">Choose a replacement activity</span>
+                <kbd class="key-badge">1</kbd>
               </button>
               <button type="button" class="reflection-btn proceed" data-outcome="proceed">
                 <span class="icon">🧘</span>
                 <span class="title">Proceed Mindfully</span>
                 <span class="desc">Proceed with conscious awareness</span>
+                <kbd class="key-badge">2</kbd>
               </button>
               <button type="button" class="reflection-btn slip" data-outcome="slip">
                 <span class="icon">⚠️</span>
                 <span class="title">Autopilot Slip</span>
                 <span class="desc">Acknowledge an impulsive lapse</span>
+                <kbd class="key-badge">3</kbd>
               </button>
             </div>
 
@@ -337,7 +340,7 @@
 
             <div class="reflection-actions-row" style="display: flex; gap: 0.8rem; width: 100%;">
               <button type="button" class="btn-primary" id="save-reflection-btn" style="flex: 1;">
-                <span>Log Conscious Choice</span>
+                <span>Log Conscious Choice <kbd class="key-badge primary-kbd">Enter</kbd></span>
                 <div class="btn-glow"></div>
               </button>
               <button type="button" class="btn-outline" id="share-success-btn" style="display: flex; align-items: center; justify-content: center; width: 50px; height: 100%; border-radius: 14px; flex-shrink: 0;" title="Share dopamine reset success to X / Twitter">
