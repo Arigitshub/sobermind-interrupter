@@ -1125,6 +1125,13 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   });
 
+  // Social Share Success trigger
+  document.getElementById('share-success-btn').addEventListener('click', () => {
+    const text = encodeURIComponent(`Bypassed an impulsive autopilot urge ("${activeTimer.impulse || 'autopilot'}") using SoberMind. Dopamine reset complete! 🌌`);
+    const url = encodeURIComponent('https://sobermind-interrupter.surge.sh');
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=550,height=420');
+  });
+
   // Esc key listener to exit timer
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && activeTimer.intervalId) {

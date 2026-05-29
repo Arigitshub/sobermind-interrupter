@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoberMind // Autopilot Interrupter</title>
   <meta name="description" content="Interrupt automatic actions and impulsive habits with a premium 90-second cognitive delay, guided somatic breathing, and sensory reframing tools.">
+  
+  <!-- Open Graph / Facebook / Discord SEO metadata -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sobermind-interrupter.surge.sh/">
+  <meta property="og:title" content="SoberMind // Autopilot Interrupter">
+  <meta property="og:description" content="Break impulsive habits with a premium 90-second cognitive delay dashboard. Somatic breathing, sensory check-ins, and ambient soundscapes.">
+  <meta property="og:image" content="https://sobermind-interrupter.surge.sh/og-preview.png">
+
+  <!-- Twitter / X SEO metadata -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://sobermind-interrupter.surge.sh/">
+  <meta property="twitter:title" content="SoberMind // Autopilot Interrupter">
+  <meta property="twitter:description" content="Break impulsive habits with a premium 90-second cognitive delay dashboard. Somatic breathing, sensory check-ins, and ambient soundscapes.">
+  <meta property="twitter:image" content="https://sobermind-interrupter.surge.sh/og-preview.png">
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -319,10 +334,15 @@
               </div>
             </div>
 
-            <button type="button" class="btn-primary" id="save-reflection-btn">
-              <span>Log Conscious Choice</span>
-              <div class="btn-glow"></div>
-            </button>
+            <div class="reflection-actions-row" style="display: flex; gap: 0.8rem; width: 100%;">
+              <button type="button" class="btn-primary" id="save-reflection-btn" style="flex: 1;">
+                <span>Log Conscious Choice</span>
+                <div class="btn-glow"></div>
+              </button>
+              <button type="button" class="btn-outline" id="share-success-btn" style="display: flex; align-items: center; justify-content: center; width: 50px; height: 100%; border-radius: 14px; flex-shrink: 0;" title="Share dopamine reset success to X / Twitter">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -466,6 +486,7 @@
       <p>© 2026 SoberMind Autopilot Interrupter. Designed for mindfulness & dopamine reset.</p>
       <div class="footer-links">
         <span>Press <kbd>Esc</kbd> to exit active timer</span>
+        <a href="docs.html" target="_blank" style="color: var(--accent-cyan); font-weight: 500;">Documentation Hub</a>
         <a href="#" id="reset-tutorial-btn">Restart Intro</a>
       </div>
     </footer>
