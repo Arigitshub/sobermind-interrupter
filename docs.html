@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoberMind // Documentation Hub</title>
+  <meta name="description" content="Science, documentation, and scripting integrations for SoberMind Autopilot Interrupter. Learn the 90-Second Rule.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Shared CSS Stylesheet -->
+  <style>
+    /* Docs Specific Layout overrides to maintain high readability */
+    .docs-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      flex: 1;
+      width: 100%;
+    }
+    .docs-nav {
+      position: sticky;
+      top: 1.5rem;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .docs-nav-link {
+      display: block;
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition-fast);
+      border: 1px solid transparent;
+    }
+    .docs-nav-link:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-primary);
+    }
+    .docs-nav-link.active {
+      background: rgba(0, 242, 254, 0.08);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+    .docs-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .docs-section {
+      scroll-margin-top: 2rem;
+    }
+    .docs-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      border-left: 4px solid var(--accent-cyan);
+      padding-left: 0.75rem;
+    }
+    .docs-section p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .code-block-container {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      position: relative;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+    .code-keyword { color: var(--accent-magenta); font-weight: bold; }
+    .code-string { color: var(--secondary-green); }
+    .code-comment { color: var(--text-muted); font-style: italic; }
+    .code-def { color: var(--accent-cyan); }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--accent-cyan);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transition-fast);
+    }
+    .back-btn:hover {
+      text-shadow: var(--shadow-glow);
+    }
+    @media (max-width: 900px) {
+      .docs-layout {
+        grid-template-columns: 1fr;
+      }
+      .docs-nav {
+        display: none; /* Hide sticky sidebar on mobile, list inline at top or fold */
+      }
+    }
+  </style>
+  <link rel="stylesheet" crossorigin href="/sobermind-interrupter/assets/style-CFzR99Zn.css">
+</head>
+<body>
+
+  <!-- Ambient Background -->
+  <canvas id="ambient-canvas"></canvas>
+  <div class="radial-glow"></div>
+
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <a href="index.html" class="back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>App Dashboard</span>
+        </a>
+      </div>
+      <div class="brand">
+        <h1>SoberMind <span class="version">Docs</span></h1>
+      </div>
+    </header>
+
+    <main class="docs-layout">
+      <!-- Sidebar navigation index -->
+      <aside class="docs-nav glass-panel">
+        <a href="#dopamine-loop" class="docs-nav-link active">1. The Dopamine Loop</a>
+        <a href="#ninety-sec-rule" class="docs-nav-link">2. The 90-Second Rule</a>
+        <a href="#grounding-science" class="docs-nav-link">3. Grounding Practices</a>
+        <a href="#integrations" class="docs-nav-link">4. Shell Integrations</a>
+        <a href="#python-lib" class="docs-nav-link">5. Python Library</a>
+      </aside>
+
+      <!-- Main Docs Reading Space -->
+      <section class="glass-panel docs-content">
+        
+        <!-- Section 1 -->
+        <article class="docs-section" id="dopamine-loop">
+          <h2>1. The Dopamine Loop</h2>
+          <p>Dopamine is a neurotransmitter responsible for reinforcement learning, reward prediction, and motivation. Modern application design exploits this mechanism by constructing short, unpredictable habit loops:</p>
+          <blockquote style="border-left: 3px solid var(--accent-magenta); padding-left: 1rem; margin: 1rem 0; font-style: italic; color: var(--text-secondary);">
+            "Trigger ➔ Craving ➔ Automatic Response ➔ Variable Reward"
+          </blockquote>
+          <p>By offering infinite scroll layouts and intermittent notifications, applications hijack this sequence, leading to involuntary autopilot usage. SoberMind inserts a structural delay between the Trigger and the Response, neutralizing the chemical hook.</p>
+        </article>
+
+        <!-- Section 2 -->
+        <article class="docs-section" id="ninety-sec-rule">
+          <h2>2. The 90-Second Rule</h2>
+          <p>According to neuroanatomists, when an impulse is triggered, the physiological cascade that creates the bodily urge (such as increased heart rate, shallow breathing, and mental tension) has a finite lifespan of approximately <strong>90 seconds</strong>.</p>
+          <p>If you refrain from reinforcing the urge with automatic thoughts or rationalizations during this window, the hormone surge peaks, returns to baseline, and dissolves. The timer coordinates your attention to help you pass this peak.</p>
+        </article>
+
+        <!-- Section 3 -->
+        <article class="docs-section" id="grounding-science">
+          <h2>3. Grounding Practices</h2>
+          <p>SoberMind guides your focus during the 90 seconds through specific, clinically backed methods:</p>
+          <ul>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>4-7-8 Breathing:</strong> Stimulates the vagus nerve, initiating parasympathetic calm.</li>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>5-4-3-2-1 Senses check:</strong> Disrupts cyclic looping thoughts by forcing tactile attention onto physical environment signals.</li>
+            <li style="margin: 0.5rem 0 0.5rem 1.5rem; color: var(--text-secondary);"><strong>Reframing questions:</strong> Activates prefrontal executive function to counter irrational dopamine justifications.</li>
+          </ul>
+        </article>
+
+        <!-- Section 4 -->
+        <article class="docs-section" id="integrations">
+          <h2>4. Shell & Terminal Alias Integration</h2>
+          <p>Developers spend significant time inside command terminals. You can configure shell aliases to route command lines through the SoberMind pause timer. For example, if you run the shell alias `check` instead of opening websites directly, it forces a mindfulness delay:</p>
+          
+          <div class="code-block-container">
+            <span class="code-comment"># Add this to your ~/.zshrc or ~/.bashrc file</span><br>
+            <span class="code-def">function</span> <span class="code-keyword">check()</span> {<br>
+            &nbsp;&nbsp;<span class="code-keyword">echo</span> <span class="code-string">"Mindfulness delay active..."</span><br>
+            &nbsp;&nbsp;<span class="code-keyword">open</span> <span class="code-string">"https://sobermind-interrupter.surge.sh"</span><br>
+            }
+          </div>
+        </article>
+
+        <!-- Section 5 -->
+        <article class="docs-section" id="python-lib">
+          <h2>5. Python Library: `sobermind-py`</h2>
+          <p>We are building a Python demo module `sobermind` that developers can run locally inside terminals to block impulsive workflow pivots. Here is a preview of the upcoming library interface:</p>
+
+          <div class="code-block-container">
+            <span class="code-keyword">import</span> sobermind<br><br>
+            <span class="code-comment"># Triggers a terminal-based 90-second breathing timer</span><br>
+            sobermind.<span class="code-def">pause</span>(<br>
+            &nbsp;&nbsp;impulse=<span class="code-string">"checking phone notifications"</span>,<br>
+            &nbsp;&nbsp;duration=<span class="code-keyword">90</span>,<br>
+            &nbsp;&nbsp;mode=<span class="code-string">"box-breathing"</span><br>
+            )
+          </div>
+        </article>
+
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 SoberMind Autopilot Interrupter. Designed for mindfulness & dopamine reset.</p>
+    </footer>
+  </div>
+
+  <!-- Shared Particles JS loader -->
+  <script>
+    // Faint copy of particle engine for standalone docs background visual
+    document.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('ambient-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      class Dot {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.radius = Math.random() * 2 + 0.5;
+          this.alpha = Math.random() * 0.3 + 0.1;
+          this.vx = (Math.random() - 0.5) * 0.15;
+          this.vy = (Math.random() - 0.5) * 0.15;
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+          if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 242, 254, ${this.alpha})`;
+          ctx.fill();
+        }
+      }
+
+      for (let i = 0; i < 40; i++) particles.push(new Dot());
+
+      function loop() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p => {
+          p.update();
+          p.draw();
+        });
+        requestAnimationFrame(loop);
+      }
+      loop();
+
+      // Simple active link styling updates on scroll
+      const links = document.querySelectorAll('.docs-nav-link');
+      const sections = document.querySelectorAll('.docs-section');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+          const top = s.offsetTop;
+          if (pageYOffset >= top - 60) {
+            current = s.getAttribute('id');
+          }
+        });
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === `#${current}`);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
