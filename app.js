@@ -122,6 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let particles = [];
   let particleAnimationId = null;
 
+  // Nebulous drifting gas clouds configurations
+  let nebulae = [
+    { x: 0.15, y: 0.25, r: 0.45, vx: 0.0001, vy: 0.00015 },
+    { x: 0.85, y: 0.65, r: 0.55, vx: -0.00015, vy: -0.0001 },
+    { x: 0.50, y: 0.45, r: 0.50, vx: 0.00008, vy: -0.00015 }
+  ];
+
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -170,6 +177,42 @@ document.addEventListener('DOMContentLoaded', () => {
   function animateParticles() {
     if (!appState.settings.particleBg) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Choose dynamic color coordinates matching the active UI theme aura
+    const currentTheme = document.body.dataset.theme || 'nebula';
+    let colors = [];
+    if (currentTheme === 'forest') {
+      colors = ['rgba(75, 220, 150, 0.04)', 'rgba(20, 180, 100, 0.03)', 'rgba(140, 240, 50, 0.02)'];
+    } else if (currentTheme === 'cyberpunk') {
+      colors = ['rgba(255, 120, 50, 0.04)', 'rgba(200, 50, 255, 0.03)', 'rgba(255, 50, 150, 0.03)'];
+    } else if (currentTheme === 'void') {
+      colors = ['rgba(255, 255, 255, 0.015)', 'rgba(200, 200, 200, 0.01)', 'rgba(150, 150, 150, 0.01)'];
+    } else { // default nebula
+      colors = ['rgba(0, 242, 254, 0.04)', 'rgba(255, 0, 128, 0.03)', 'rgba(120, 0, 255, 0.03)'];
+    }
+
+    // Paint drifting organic nebula clouds in background
+    nebulae.forEach((n, idx) => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > 1) n.vx *= -1;
+      if (n.y < 0 || n.y > 1) n.vy *= -1;
+      
+      const px = n.x * canvas.width;
+      const py = n.y * canvas.height;
+      const rad = n.r * Math.min(canvas.width, canvas.height);
+      const color = colors[idx] || colors[0];
+      
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, rad);
+      grad.addColorStop(0, color);
+      grad.addColorStop(0.5, color.replace('0.04', '0.015').replace('0.03', '0.01').replace('0.02', '0.005'));
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(px, py, rad, 0, Math.PI * 2);
+      ctx.fill();
+    });
     
     // Render lines connecting close particles (constellation mesh)
     const maxDistance = 110;
